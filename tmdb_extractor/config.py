@@ -9,6 +9,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from dotenv import find_dotenv, load_dotenv
+
+# usecwd=True: look for .env from the directory the app is run in (walking up),
+load_dotenv(find_dotenv(usecwd=True))
+
 from .errors import ConfigError
 
 BASE_URL = "https://api.themoviedb.org/3"
@@ -27,8 +32,13 @@ class _EnvReader:
         return value.strip() if value and value.strip() else default
 
     def _number(
-        self, name: str, default: Any, cast: Callable[[str], Any], kind: str,
-        minimum: float | None, maximum: float | None,
+        self,
+        name: str,
+        default: Any,
+        cast: Callable[[str], Any],
+        kind: str,
+        minimum: float | None,
+        maximum: float | None,
     ) -> Any:
         raw = self.text(name, None)
         if raw is None:
@@ -41,9 +51,7 @@ class _EnvReader:
         if (minimum is not None and value < minimum) or (
             maximum is not None and value > maximum
         ):
-            self.problems.append(
-                f"{name}={raw} is out of range [{minimum}, {maximum}]"
-            )
+            self.problems.append(f"{name}={raw} is out of range [{minimum}, {maximum}]")
             return default
         return value
 
