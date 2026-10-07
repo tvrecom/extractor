@@ -1,0 +1,1 @@
+jq -r '[.tmdb_id, .title] | @tsv' tmdb_extraction/extracted/movies.jsonl | head -n 20
